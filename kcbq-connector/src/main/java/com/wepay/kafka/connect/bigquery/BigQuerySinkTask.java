@@ -18,6 +18,7 @@ package com.wepay.kafka.connect.bigquery;
  */
 
 
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.InsertAllRequest.RowToInsert;
 import com.google.cloud.bigquery.TableId;
@@ -230,8 +231,8 @@ public class BigQuerySinkTask extends SinkTask {
       return testBigQuery;
     }
     String projectName = config.getString(config.PROJECT_CONFIG);
-    String keyFilename = config.getString(config.KEYFILE_CONFIG);
-    return new BigQueryHelper().connect(projectName, keyFilename);
+    GoogleCredentials credentials = config.getCredentials();
+    return new BigQueryHelper().connect(projectName, credentials);
   }
 
   private SchemaManager getSchemaManager(BigQuery bigQuery) {
@@ -261,8 +262,8 @@ public class BigQuerySinkTask extends SinkTask {
       return testGcs;
     }
     String projectName = config.getString(config.PROJECT_CONFIG);
-    String keyFilename = config.getString(config.KEYFILE_CONFIG);
-    return new GCSBuilder(projectName).setKeyFileName(keyFilename).build();
+    GoogleCredentials credentials = config.getCredentials();
+    return new GCSBuilder(projectName).setCredentials(credentials).build();
   }
 
   private GCSToBQWriter getGcsWriter() {
